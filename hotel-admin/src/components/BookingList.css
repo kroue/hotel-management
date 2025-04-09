@@ -1,0 +1,54 @@
+.booking-list-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .booking-list-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .booking-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+  }
+  
+  .booking-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .booking-room {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .booking-user,
+  .booking-dates,
+  .booking-status {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  
+  .booking-status.confirmed {
+    color: green;
+  }
+  
+  .booking-status.pending {
+    color: orange;
+  }
+  
+  .booking-status.cancelled {
+    color: red;
+  }
