@@ -1,0 +1,22 @@
+.layout {
+    display: flex;
+  }
+  
+  .content {
+    margin-left: 200px; /* Leave space for the sidebar */
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .content h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .content p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+  }

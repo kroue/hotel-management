@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import axios from '../api/axios'; // Ensure this points to your axios instance
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
@@ -8,20 +7,37 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = async () => {
     try {
-      // Sending the login request to the backend (Django)
-      const res = await axios.post('token/', { username, password });
-      const token = res.data.access;  // Assuming access is the token in response
-
-      // Check if we received the token and navigate to RoomListScreen
-      if (token) {
-        // You can store the token globally or in async storage for future use
-        navigation.navigate('Rooms', { token });
-      } else {
-        throw new Error('Token not received');
+      const response = await fetch('http://192.168.1.32/hotel-management/api/mobile_login.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to log in. Please check your credentials.');
       }
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Login failed', 'Please check your username and password');
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        if (!data.token) {
+          throw new Error('Token is missing in the response.');
+        }
+  
+        Alert.alert('Success', 'Login successful.');
+        console.log('Navigating to Rooms with token:', data.token); // Debugging statement
+        navigation.navigate('Rooms', { token: data.token });
+      } else {
+        Alert.alert('Error', data.message || 'Login failed.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
 
@@ -33,7 +49,7 @@ export default function LoginScreen({ navigation }) {
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Email Address"
+        placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
@@ -51,7 +67,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.forgotPassword}>Forgot Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.forgotPassword}>Sign Up</Text>
+        <Text style={styles.signUpRedirect}>Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,17 +79,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#666',
+    color: '#555',
     marginBottom: 20,
   },
   input: {
@@ -81,18 +98,18 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
+    borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
   },
   loginButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#ff3366',
+    backgroundColor: '#666',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 5,
     marginBottom: 10,
   },
   loginButtonText: {
@@ -105,18 +122,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
   },
-  signUpButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#007bff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
+  signUpRedirect: {
+    color: '#007bff',
+    fontSize: 14,
     marginTop: 10,
-  },
-  signUpButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });

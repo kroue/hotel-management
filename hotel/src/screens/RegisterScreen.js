@@ -1,38 +1,38 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import axios from '../api/axios'; // Ensure this points to your axios instance
 
 export default function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-const handleRegister = async () => {
-  try {
-    const response = await axios.post('register/', {
-      username,
-      email,
-      password,
-    });
-    
-    if (response.status === 201) {
-      Alert.alert('Success', 'Registration successful. Please log in.');
-      navigation.navigate('Login'); // Navigate to the login screen after successful registration
-    } else {
-      Alert.alert('Error', 'Unexpected response. Please try again.');
-    }
-  } catch (error) {
-    if (error.response) {
-      console.log('Error response:', error.response);  // Log the error response
-      Alert.alert('Error', error.response.data.detail || 'Registration failed');
-    } else {
-      console.log('Error:', error);  // Log network error
+  const handleRegister = async () => {
+    try {
+      const response = await fetch('http://192.168.1.32/hotel-management/api/mobile_register.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        Alert.alert('Success', 'Registration successful. Please log in.');
+        navigation.navigate('Login');
+      } else {
+        Alert.alert('Error', data.message || 'Registration failed.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
     }
-  }
-};
-
-  
+  };
 
   return (
     <View style={styles.container}>
@@ -73,17 +73,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9', // Match the web version background
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#333', // Match the web version text color
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#666',
+    color: '#555', // Match the web version text color
     marginBottom: 20,
   },
   input: {
@@ -91,18 +92,18 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
+    borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff', // Match the web version input background
   },
   registerButton: {
     width: '100%',
     height: 50,
-    backgroundColor: '#ff3366',
+    backgroundColor: '#666', // Match the web version button color
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 5,
     marginBottom: 10,
   },
   registerButtonText: {
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   loginRedirect: {
-    color: '#007bff',
+    color: '#007bff', // Match the web version link color
     fontSize: 14,
     marginTop: 10,
   },
